@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Copyright (c) 2016
+  ~ Just for learn java coding
+  -->
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.IExceptionMapper">
+    <parameterMap id="param" type="com.restree.domain.ResTreeException"/>
+    <resultMap id="result" type="com.restree.domain.ResTreeException"/>
+
+    <insert id="insertException" parameterMap="param">
+        insert into rts_tree_exception
+        (
+        ID,
+        EXCEPTION_TYPE,
+        EXCEPTION_DESC,
+        CREATE_TIME,
+        UPDATE_TIME,
+        AREA_ID,
+        OPERATOR_ID,
+        VERSION_NO,
+        OBJECT_TYPE,
+        OBJECT_ID
+        )
+        values
+        (
+        SEQ_RTS_TREE_EXCEPTION_ID.nextval,
+        #{exceptionType},
+        #{exceptionDescription},
+        #{createTime},
+        #{updateTime},
+        #{areaId},
+        #{operatorId},
+        #{versionNo},
+        #{objectType},
+        #{objectId}
+        )
+    </insert>
+
+    <select id="getResTreeException" resultMap="result">
+        select EXCEPTION_TYPE as exceptionType,
+        name as exceptionDescription
+        from rts_exception_type
+        where exception_type = #{exceptionType}
+    </select>
+</mapper>

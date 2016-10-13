@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.IRouteMapper">
+
+    <parameterMap id="link" type="com.restree.domain.Link"/>
+    <resultMap id="linkResult" type="com.restree.domain.Link"/>
+
+    <select id="getRouteBusiId" resultType="int">
+        select seq_rts_circuit_link_id.nextval as "LinkId" from dual
+    </select>
+
+    <select id="getRouteId" resultType="int">
+        select SEQ_RTS_CIRCUIT_ROUTE_ID.nextval as id from dual
+    </select>
+
+    <select id="getRoutePhyId" resultType="int">
+        select SEQ_RTS_CIRCUIT_ROUTE_PHY_ID.nextval as phyId from dual
+    </select>
+
+
+    <insert id="createRouteBusi" parameterMap="link">
+        insert into rts_circuit_route_busi
+        (
+        id,
+        type,
+        busi_id,
+        vlan,seq,
+        area_id,
+        start_device_type,
+        start_device_id,
+        start_port_id,
+        next_device_type,
+        next_device_id,
+        next_port_id,
+        create_time,
+        operator_id
+        )
+        values
+        (
+        seq_rts_circuit_route_busi_id.nextval,
+        #{type},
+        #{linkId},
+        #{vlan},
+        #{weight},
+        #{areaId},
+        #{startDeviceType},
+        #{startDeviceId},
+        #{startPortId},
+        #{nextDeviceType},
+        #{nextDeviceId},
+        #{nextPortId},
+        sysdate,
+        'admin'
+        )
+    </insert>
+
+    <insert id="createRoute" parameterMap="link">
+        insert into rts_circuit_route
+        (
+        id,
+        link_type,
+        link_id,
+        seq,
+        start_device_type,
+        start_device_id,
+        start_device_no,
+        start_port_id,
+        start_port_no,
+        next_device_type,
+        next_device_id,
+        next_device_no,
+        next_port_id,
+        next_port_no,
+        area_id,
+        create_time,
+        operator_id
+        )
+        values
+        (
+        SEQ_RTS_CIRCUIT_ROUTE_ID.nextval,
+        #{type},
+        #{linkId},
+        #{sequence},
+        #{startDeviceType},
+        #{startDeviceId},
+        sf_get_eqp_no(#{startDeviceId}),
+        #{startPortId},
+        sf_get_port_no(#{startPortId}),
+        #{nextDeviceType},
+        #{nextDeviceId},
+        sf_get_eqp_no(#{nextDeviceId}),
+        #{nextPortId},
+        sf_get_port_no(#{nextPortId}),
+        #{areaId},
+        sysdate,
+        'admin'
+        )
+    </insert>
+
+    <select id="getPhyRoute" resultMap="linkResult">
+        select a.start_super_object_type as "startDeviceType",
+        a.start_super_object_id as "startDeviceId",
+        a.start_object_id as "startPortId",
+        a.next_super_object_type as "nextDeviceType",
+        a.next_super_object_id as "nextDeviceId",
+        a.next_object_id as "nextPortId"
+        from rts_circuit_route_phy a
+        <where>
+            <if test="deviceType != null and deviceType != ''">
+                a.start_super_object_type = #{deviceType}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                and a.start_super_object_id = #{deviceId}
+            </if>
+            <if test="portId != null and portId != ''">
+                and a.start_object_id = #{portId}
+            </if>
+            <if test="toDeviceType != null and toDeviceType != ''">
+                and a.next_super_object_type = #{toDeviceType}
+            </if>
+            <if test="toDeviceId != null and toDeviceId != ''">
+                and a.next_super_object_id = #{toDeviceId}
+            </if>
+            <if test="toPortId != null and toPortId != ''">
+                and a.next_object_id = #{toPortId}
+            </if>
+        </where>
+    </select>
+
+</mapper>

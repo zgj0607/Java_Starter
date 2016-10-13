@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.IResTreeMainMapper">
+
+    <parameterMap id="param" type="com.restree.domain.ResTreeMain"/>
+    <resultMap id="result" type="com.restree.domain.ResTreeMain"/>
+
+    <update id="updateCrmTreeMain" parameterMap="param">
+        update rts_res_tree_main a
+        set a.customer_id = #{customerId},
+        a.prod_inst_id = #{prodInstId},
+        a.access_type = #{accessType},
+        a.state = #{state}
+        where a.account_no = #{accountNo}
+    </update>
+
+    <select id="getCrmInfo" resultMap="result">
+        select account_no as accountNo,
+        area_id as areaId
+        from RTS_CUSTOMER_PROD prod
+        left join pub_cust pc on
+        prod.customer_id = pc.cust_id
+        <where>
+            <if test="accountNo != null and accountNo != ''">
+                prod.account_no = #{accountNo}
+            </if>
+            <if test="areaId != null and areaId != ''">
+                prod.areaId = #{areaId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAaaInfo" resultMap="result">
+        select account_no as accountNo,
+        area_id as areaId,
+        svlan,
+        cvlan,
+        bas_ip as brasIp,
+        bas_port_no as brasPortNo,
+        use_mac as userMac
+        from rts_aaa aaa
+        <where>
+            <if test="accountNo != null and accountNo != ''">
+                aaa.account_no = #{accountNo}
+            </if>
+            <if test="areaId != null and areaId != ''">
+                aaa.areaId = #{areaId}
+            </if>
+            <if test="brasIp != null and brasIp != ''">
+                aaa.bas_ip = #{brasIp}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertCrmTreeMain" parameterMap="param">
+        insert into rts_res_tree_main
+        (
+        id,
+        ACCOUNT_NO,
+        CUSTOMER_ID,
+        AREA_ID,
+        ACCESS_TYPE,
+        PROD_INST_ID,state
+        )
+        values
+        (
+        seq_rts_res_tree_main_id.nextval,
+        #{accountNo},
+        #{customerId},
+        #{areaId},
+        #{accessType},
+        #{prodInstId},
+        #{state}
+        )
+    </insert>
+
+    <update id="updateAaaTreeMain" parameterMap="param">
+        update rts_res_tree_main a
+        set a.svlan = #{svlan},
+        a.cvlan = #{cvlan},
+        a.bas_id = #{brasId},
+        a.bas_port_id = #{brasPortId},
+        a.state = #{state}
+        <if test="userMac != null and userMac != ''">
+            ,a.user_mac = #{userMac}
+        </if>
+        where a.account_no = #{accountNo}
+    </update>
+
+    <update id="updateBusiTreeMain" parameterMap="param">
+        update rts_res_tree_main a
+        set a.route_up_busi_id = #{upBusiId},
+        a.olt_id = #{oltId},
+        a.state = #{state}
+        where a.account_no = #{accountNo}
+    </update>
+
+    <update id="updateTreeMainField" parameterMap="param">
+        update rts_res_tree_main a
+        set a.account_no = #{accountNo}
+        <if test="oltId != null and oltId != ''">
+            , a.olt_id = #{oltId}
+        </if>
+        <if test="oltIp != null and oltIp != ''">
+            , a.olt_ip = #{oltIp}
+        </if>
+        <if test="oltNo != null and oltNo != ''">
+            , a.olt_no = #{oltNo}
+        </if>
+        <if test="oltPonId != null and oltPonId != ''">
+            , a.olt_port_id = #{oltPonId}
+        </if>
+        <if test="oltPonNo != null and oltPonNo != ''">
+            , a.olt_port_no = #{oltPonNo}
+        </if>
+        <if test="loid != null and loid != ''">
+            , a.loid = #{loid}
+        </if>
+        <if test="obdId != null and obdId != ''">
+            , a.obd_id = #{obdId}
+        </if>
+        <if test="obdNo != null and obdNo != ''">
+            , a.obd_no = #{obdNo}
+        </if>
+        <if test="obdPortId != null and obdPortId != ''">
+            , a.obd_port_id = #{obdPortId}
+        </if>
+        <if test="obdPortNo != null and obdPortNo != ''">
+            , a.obd_port_no = #{obdPortNo}
+        </if>
+        <if test="mainOptRoadId != null and mainOptRoadId != ''">
+            , a.main_opt_raod_id = #{mainOptRoadId}
+        </if>
+        <if test="childOptRoadId != null and childOptRoadId != ''">
+            , a.child_opt_road_id = #{childOptRoadId}
+        </if>
+        <if test="onuId != null and onuId != ''">
+            , a.onu_id = #{onuId}
+        </if>
+        <if test="onuIp != null and onuIp != ''">
+            , a.onu_ip = #{onuIp}
+        </if>
+        <if test="onuNo != null and onuNo != ''">
+            , a.onu_no = #{onuNo}
+        </if>
+        <if test="onuPortId != null and onuPortId != ''">
+            , a.onu_port_id = #{onuPortId}
+        </if>
+        <if test="onuPortNo != null and onuPortNo != ''">
+            , a.onu_port_no = #{onuPortNo}
+        </if>
+        <if test="ontId != null and ontId != ''">
+            , a.ont_id = #{ontId}
+        </if>
+        <if test="terminalSn != null and terminalSn != ''">
+            , a.terminal_sn = #{terminalSn}
+        </if>
+        <if test="terminalMac != null and terminalMac != ''">
+            , a.terminal_mac = #{terminalMac}
+        </if>
+        <if test="dataSource != null and dataSource != ''">
+            , a.data_source = #{dataSource}
+        </if>
+        <if test="upBusiId != null and upBusiId != ''">
+            , a.route_up_busi_id = #{upBusiId}
+        </if>
+        <if test="downBusiId != null and downBusiId != ''">
+            , a.route_down_busi_id = #{downBusiId}
+        </if>
+        <if test="state != null and state != ''">
+            , a.state = #{state}
+        </if>
+        where a.id = #{id}
+    </update>
+
+</mapper>

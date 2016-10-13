@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.INodeMapper">
+
+    <resultMap id="nodeResult" type="com.restree.domain.Node"/>
+
+    <select id="getDevice" resultMap="nodeResult">
+        select eqp_id as "deviceId",
+        region_id as "areaId",
+        manage_ipaddress as "ip"，
+        eqp_id as "deviceId",
+        eqp_name as "deviceName",
+        res_type_id as "deviceType"
+        from rme_eqp
+        <where>
+            1 = 1
+            <if test="ip != null and ip != ''">
+                and manage_ipaddress = #{ip}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                and eqp_id = #{deviceId}
+            </if>
+            <if test="areaId != null and areaId != ''">
+                and region_id = #{areaId}
+            </if>
+            <if test="deviceType != null and deviceType != ''">
+                and res_type_id = #{deviceType}
+            </if>
+            <if test="deviceName != null and deviceName != ''">
+                and eqp_name = #{deviceName}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.IQinqMapper">
+
+    <resultMap id="qinqResult" type="com.restree.domain.Qinq"/>
+
+    <select id="qinq" resultMap="qinqResult">
+        select a.device_id as deviceId,
+        a.port_id as portId,
+        a.device_type as deviceType,
+        a.svlan as svlan
+        from rts_port_qinq a
+        <where>
+            <if test="portId != null and portId !=''">
+                a.port_id = #{portId}
+            </if>
+            <if test="deviceId != null and deviceId != ''">
+                and a.device_id = #{deviceId}
+            </if>
+            <if test="svlan != null and svlan != ''">
+                and a.svlan = #{svlan}
+            </if>
+            <if test="cvlan != null and cvlan != ''">
+                <![CDATA[and (a.inner_vlan == #{cvlan} or (
+               a.start_cvlan > #{cvlan}
+               and a.end_cvlan < #{cvlan}
+               ))]]>
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getQinqCount" resultType="int">
+        select count(1)
+        from rts_port_qinq qinq
+        where device_id = #{deviceId}
+        and svlan = #{svlan}
+        <if test="(cvlan == null or cvlan == '') and cvlanFlag == 1">
+            and start_cvlan is null
+        </if>
+        <if test="cvlan != null and cvlan != '' and cvlanFlag == 1">
+            and start_cvlan is not null
+        </if>
+        <if test="portId != null and portId != ''">
+            and port_id = #{portId}
+        </if>
+        <if test="accessType != null and accessType != ''">
+            and access_type = #{accessType}
+        </if>
+    </select>
+
+</mapper>

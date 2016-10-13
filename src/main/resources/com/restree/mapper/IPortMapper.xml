@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.IPortMapper">
+
+    <parameterMap id="nodeParam" type="com.restree.domain.Node"/>
+    <resultMap id="nodeResult" type="com.restree.domain.Node"/>
+
+    <select id="getPortByDeviceVlan" resultMap="nodeResult">
+        select a.device_type as "deviceType",
+        a.device_id as "deviceId",
+        a.port_id as "upDownPortId",
+        a.svlan as "svlan",
+        a.area_id as "areaId"
+        from rts_port_qinq a
+        <where>
+            a.device_id = #{deviceId}
+            and a.svlan = #{svlan}
+            <if test="portId != null and portId != ''">
+                and a.port_id != #{portId}
+            </if>
+            <if test="targetDeviceType != null and targetDeviceType != ''">
+                and not exists (select 1
+                from rts_device_mac bas, rts_mac_forward fdb
+                where fdb.target_mac = bas.mac
+                and bas.device_type = #{targetDeviceType}
+                and fdb.port_id = b.port_id
+                and rownum = 1)
+            </if>
+        </where>
+    </select>
+
+    <select id="getPortMac" resultType="string">
+        select mac as "mac"
+        from rts_device_mac
+        where port_id = #{portId}
+    </select>
+
+    <select id="getPortCountByMac" resultType="int">
+        select count(1)
+        from rts_device_mac mac,
+        rme_port port
+        where mac.mac = #{mac}
+        and port.port_id = mac.port_id
+        and mac.mac_type = 1
+        and instr(port_name,'.') = 0
+    </select>
+
+    <select id="getUpPortOltByAccount" parameterMap="nodeParam" resultMap="nodeResult">
+        select a.olt_ip as "ip",
+        a.svlan as "vlan",
+        a.account_no as "accountNo",
+        c.port_id as "upPortId",
+        c.device_id as "deviceId",
+        c.device_type as "deviceType"
+        from rts_account_res a,
+        rme_eqp b,
+        rts_port_qinq c
+        where a.account_no = #{accountNo}
+        and a.olt_ip = b.manage_ipaddress
+        and b.eqp_id = c.device_id
+        and c.start_cvlan is null
+        and c.end_cvlan is null
+        and c.svlan = #{vlan}
+    </select>
+
+    <select id="getFtthOltPonByVlan" resultMap="nodeResult">
+        select port_id as upDownPortId,
+        ont_id as ontId
+        access_type as accessType
+        from rts_port_qinq qinq
+        where device_id = #{deviceId}
+        and svlan = #{svlan}
+        and nvl(ont_id,-1) >= 0
+        and (inner_vlan = #{cvlan}
+        or #{cvlan} between start_cvlan and end_cvlan)
+        and access_type = #{accessType}
+
+    </select>
+
+    <select id="getFttbOltPonByVlan" resultMap="nodeResult">
+        select distinct onu.device_id as deviceId,
+        onu.port_id as portId,
+        olt.port_id as upDownPortId,
+        ont_id as ontId
+        access_type as accessType
+        from rts_port_qinq onu, rts_olt_port_busi olt
+        where olt.olt_id = #{deviceId}
+        and onu.device_id = olt.onu_id
+        and onu.device_type = #{onuType}
+        and onu.inner_vlan = #{cvlan}
+        and exists(select 1
+        from rts_port_qinq qinq
+        where qinq.port_id = olt.port_id
+        and qinq.svlan = #{svlan}
+        <if test="ontId != null and ontId != ''">
+            and qinq.ont_id = olt.ont_id
+        </if>
+        and rownum = 1)
+    </select>
+
+    <select id="getPortByPortNo" resultMap="nodeResult">
+        select super_res_id as deviceId,
+        (select eqp_name from rme_eqp where eqp_id = port.super_res_id) as deviceName,
+        port_id as portId,
+        super_res_type as deviceType,
+        port_name as portNo
+        from rme_port port
+        where super_res_id = #{deviceId}
+        and alias=#{portNo}
+    </select>
+
+    <select id="getOltPonPortBusi" resultMap="nodeResult">
+        select terminal_loid as deviceId,
+        '' as portId,
+        terminal_loid as loid,
+        terminal_sn as terminalSn,
+        terminal_mac as terminalMac
+        from rts_olt_port_busi
+        where port_id = #{ponPortId}
+        and ont_id = #{ontId}
+    </select>
+
+</mapper>

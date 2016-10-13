@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.restree.mapper.IResDataMapper">
+
+    <resultMap id="resData" type="com.restree.domain.ResData"/>
+    <resultMap id="Link" type="com.restree.domain.Link"/>
+
+    <select id="getResDeviceRelaByAccount" resultMap="resData">
+        select cust_id as customerId,
+        cust_name as customerName,
+        account_no as accountNo,
+        access_type as accessType,
+        band_width as bandwidth,
+        svlan as svlan,
+        cvlan as cvlan,
+        is_complete as isComplete,
+        install_addr as installAddress,
+        main_opr_road_id as mainOptRoadId,
+        sub_opr_road_id as childOptRoadId,
+        loid as loid,
+        a_device_id as aDeviceId,
+        a_device_type_id as aDeviceType,
+        a_device_name as aDeviceName,
+        a_port_id as aPortId,
+        a_port_name as aPortName,
+        z_device_id as zDeviceId,
+        z_device_type_id as zDeviceType,
+        z_device_name as zDeviceName,
+        z_port_id as zPortId,
+        z_port_name as zPortName,
+        olt_name as oltName,
+        olt_ip as oltIp,
+        onu_ip as onuIp,
+        onu_mac as onuMac,
+        ont_id as ontId,
+        terminal_device_id as terminalDeviceId,
+        terminal_device_name as terminalDeviceName,
+        terminal_device_type as terminalDeviceType,
+        terminal_port_id as terminalPortId,
+        terminal_port_name as terminalPortName
+        from rts_account_res res
+        where res.account_no = #{accountNo}
+    </select>
+
+    <select id="getOptRoadByNoOrId" resultMap="Link">
+        select a_eqp_id as startDeviceId,
+        a_port_id as startPortId,
+        sf_get_res_type(a_eqp_id) as startDeviceType,
+        z_eqp_id as nextDeviceId,
+        z_port_id as nextPortId,
+        sf_get_res_type(z_eqp_id) as nextDeviceType,
+        opt_road_no as linkNo
+        from opt_road
+        <where>
+            region_id = #{areaId}
+            <if test="optRoadNo != null and optRoadNo!= ''">
+                and opt_road_no = #{optRoadNo}
+            </if>
+            <if test="optRoadId != null and optRoadId != ''">
+                and opt_road_id = #{optRoadId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
