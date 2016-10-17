@@ -25,17 +25,6 @@ public class NodeTest extends ResTreeTestBase {
     @Autowired
     private ResTreeAssembly resTreeAssembly;
 
-    //    @Test
-//    public void testGetDevice() throws Exception{
-//        String deviceId = "000125081000001011148075";
-//        String areaId = "000102000000000000000005";
-//        String deviceType = String.valueOf(ResourceType.BRAS);
-//        List<Node> devices = nodeMapper.getDevice(null, null, deviceType,null,null);
-//        for (Node device : devices) {
-//            System.out.println(device.getDeviceName() + "-" + device.getIp());
-//        }
-//    }
-//
     @Test
     public void testSort() throws Exception {
         Node node1 = new Node();
@@ -49,11 +38,11 @@ public class NodeTest extends ResTreeTestBase {
     }
 
 
-//    @Test
-//    public void testRouteAssebly() throws Exception{
-//        String[] accountNos = new String[1];
-//        accountNos[0] = "35790181106";
-//        resTreeAssembly.resTreeAllAssemble(null,null,accountNos);
-//    }
+    @Test
+    public void testRouteAssebly() throws Exception {
+        String[] accountNos = new String[1];
+        accountNos[0] = "35790181106";
+        resTreeAssembly.resTreeAllAssemble(null, null, accountNos);
+    }
 
 }
