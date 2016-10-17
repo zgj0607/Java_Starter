@@ -6,7 +6,6 @@
 package com.restree;
 
 import com.restree.domain.Node;
-import com.restree.mapper.INodeMapper;
 import com.restree.service.MacForwardService;
 import com.restree.service.ResTreeAssembly;
 import org.junit.Test;
@@ -16,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NodeTest extends ResTreeTestBase {
-    @Autowired
-    private INodeMapper nodeMapper;
 
     @Autowired
     private MacForwardService macForwardService;
