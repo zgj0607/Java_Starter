@@ -58,5 +58,7 @@ public class ResourceType {
 
     public static final String FTTH_DICT = "2";
 
+    public static final int PRODUCT_STATE = 2;
+
 
 }
