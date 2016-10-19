@@ -1,14 +1,36 @@
 package com.zhou;
 
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 
 public class TestMain {
 
     public static void main(String[] args) throws Throwable {
-        Car car = initByDefaultConst();
-        car.introduce();
+
+
+        try {
+
+            Connection con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/world_x", "root", "491001coM.");
+            Class.forName("com.mysql.jdbc.Driver").newInstance(); //MYSQL驱动
+            System.out.print("yes");
+            Statement stmt = con.createStatement();
+            String sql = "select * from city order by countrycode desc, name asc";
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                System.out.println(rs.getInt(1) + "_" + rs.getString(2));
+            }
+        } catch (Exception e) {
+            System.out.print("MYSQL ERROR:" + e.getMessage());
+        }
+
+
     }
 
     private static int testOut() {
